@@ -3,7 +3,8 @@ import sys
 
 """
 Contains source code for efficiently creating a Suffix Array
-for a long string
+for a long string. For a string S, this builds a Suffix Array
+in time O( |S| log(s) ) using O(|S|) memory
 """
 
 class SuffixArrayEfficient(object):
