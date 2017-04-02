@@ -104,14 +104,22 @@ class SuffixTreeEfficient(object):
         self.root = self._make_suffix_tree_from_suffix_array(self.text, \
                 self.suffix_array, lcp_array)
 
-        self.display_tree()
-
     def display_tree(self):
-        self._display_tree_recursive(self.root)
+        """
+        Displays the suffix tree labels level by level. The furthest left
+        is level 0 the next furthest left is level 1 etc. The children of
+        a given label are signified by a change in level (indentation).
+        Returns the displayed string
+        """
+        s = self._display_tree_recursive("", self.root)
+        length = len(s) - 2 # remove the trailing newline char
+        return s[:length]
 
-    def _display_tree_recursive(self, curr, space=''):
+    def _display_tree_recursive(self, string, curr, space=''):
         for child in curr.children:
             start = curr.children[child].edge_start
             end = curr.children[child].edge_end
-            print(space + self.text[start:end+1])
-            self._display_tree_recursive(curr.children[child], space+"\t")
+            #print(space + self.text[start:end+1])
+            string += space + self.text[start:end+1] + "\n"
+            string = self._display_tree_recursive(string, curr.children[child], space+"\t")
+        return string

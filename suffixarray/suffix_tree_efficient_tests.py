@@ -7,11 +7,24 @@ def test_compute_lcp_array():
     print("Done")
 
 def test_create_suffix_tree():
-    print("Testing creating a suffix tree... ")
-    sufftree = SuffixTreeEfficient("GTAGT")
-    sufftree.create_suffix_tree()
-    print("Done")
+    print("Testing creating a suffix tree... ", end='')
 
+    st = SuffixTreeEfficient("AAA")
+    st.create_suffix_tree()
+    rep = repr(st.display_tree())
+    assert rep == repr('$\nA\n\t$\n\tA\n\t\t$\n\t\tA')
+
+    st = SuffixTreeEfficient("A")
+    st.create_suffix_tree()
+    rep = repr(st.display_tree())
+    assert rep == repr('$\nA')
+
+    st = SuffixTreeEfficient("GTAGT")
+    st.create_suffix_tree()
+    rep = repr(st.display_tree())
+    assert rep == repr('$\nAGT$\nGT\n\t$\n\tAGT$\nT\n\t$\n\tAGT')
+
+    print("Done")
 
 def main():
     test_compute_lcp_array()

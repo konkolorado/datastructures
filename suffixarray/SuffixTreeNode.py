@@ -11,5 +11,7 @@ class SuffixTreeNode(object):
         self.edge_end = edge_end
 
     def __str__(self):
-        return str(self.string_depth) + "Children: " + str(self.children) + \
-            str(self.edge_start) + str(self.edge_end)
+        return "Depth: " + str(self.string_depth) + \
+            "Edge start: " + str(self.edge_start) + \
+            "Edge end: " + str(self.edge_end) + \
+            "Children: " + str(self.children) 
