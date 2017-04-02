@@ -9,3 +9,7 @@ class SuffixTreeNode(object):
         self.string_depth = string_depth
         self.edge_start = edge_start
         self.edge_end = edge_end
+
+    def __str__(self):
+        return str(self.string_depth) + "Children: " + str(self.children) + \
+            str(self.edge_start) + str(self.edge_end)
