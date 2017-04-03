@@ -86,15 +86,19 @@ class SuffixTreeEfficient(object):
         curr_node = root
         for i in range(len(S)):
             suffix = order[i]
+            #print("suffix:", suffix)
             while curr_node.string_depth > lcp_prev:
                 curr_node = curr_node.parent
             if curr_node.string_depth == lcp_prev:
                 curr_node = self._new_leaf(curr_node, S, suffix)
+                curr_node.occurs = suffix
             else:
                 edge_start = order[i-1] + curr_node.string_depth
                 offset = lcp_prev - curr_node.string_depth
                 mid_node = self._break_edge(curr_node, S, edge_start, offset)
+                #mid_node.occurs = suffix
                 curr_node = self._new_leaf(mid_node, S, suffix)
+                curr_node.occurs=suffix
             if i < len(S)-1:
                 lcp_prev = lcp_arr[i]
         return root
@@ -119,7 +123,66 @@ class SuffixTreeEfficient(object):
         for child in curr.children:
             start = curr.children[child].edge_start
             end = curr.children[child].edge_end
-            #print(space + self.text[start:end+1])
             string += space + self.text[start:end+1] + "\n"
             string = self._display_tree_recursive(string, curr.children[child], space+"\t")
         return string
+
+    def find_patterns(self, patterns):
+        locations = []
+        for pattern in patterns:
+            locations.append(self.find_pattern(pattern))
+        return locations
+
+    def find_pattern(self, pattern):
+        """
+        Traverses the suffix tree to find if a given pattern
+        can be matched. If so, returns a list of indices where it
+        occurs
+        """
+        curr_node = self.root
+        curr_char_pos = 0
+        updated = True
+        while curr_char_pos < len(pattern) and updated:
+            updated = False
+            for child in curr_node.children.keys():
+                child_node = curr_node.children[child]
+                edge_label = self.text[child_node.edge_start:child_node.edge_end+1]
+                edge_label_len = child_node.edge_end - child_node.edge_start + 1
+
+                # Check if pattern contains the full edge label
+                if pattern[curr_char_pos:curr_char_pos+edge_label_len] == edge_label:
+                    curr_char_pos += edge_label_len
+                    curr_node = child_node
+                    updated = True
+                    break
+
+                # Check if edge label contains the pattern
+                elif edge_label.startswith(pattern[curr_char_pos:]):
+                    curr_char_pos = len(pattern)
+                    curr_node = child_node
+                    updated = True
+                    break
+
+            # We have completed the pattern, now return where the pattern
+            # occurs in the original text
+            if curr_char_pos == len(pattern):
+                # Not a leaf node, all children of node contain pattern
+                if curr_node.occurs == None:
+                    locations = []
+                    self._explore_leaves(curr_node, locations)
+                else:
+                    locations = [curr_node.occurs]
+                return locations
+        return []
+
+    def _explore_leaves(self, node, locations):
+        """
+        Explores a down thru to the leaves from a given node,
+        appending where the suffix at the leaf occurs in the
+        string to locations
+        """
+        for child in node.children.keys():
+            if node.children[child].occurs != None:
+                locations.append(node.children[child].occurs)
+            else:
+                self._explore_leaves(node.children[child], locations)
