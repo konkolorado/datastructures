@@ -29,7 +29,6 @@ def test_create_suffix_tree():
 def test_find_pattern():
     print("Testing find pattern... ", end='')
 
-
     st = SuffixTreeEfficient("GTAGT")
     st.create_suffix_tree()
     assert st.find_pattern("B") == []
